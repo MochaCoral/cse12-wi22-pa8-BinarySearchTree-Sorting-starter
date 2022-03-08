@@ -9,14 +9,42 @@ public class MyBST<K extends Comparable<K>,V>{
         return size;
     }
 
-    public V insert(K key, V value){
-        // TODO
-        return null;
+    public V insert(K key, V value) throws NullPointerException{
+        if(key == null) {
+            throw new NullPointerException();
+        }
+        MyBSTNode<K,V> insertion = new MyBSTNode<K,V>(key, value, null);
+        MyBSTNode<K,V> parent = this.root;
+        while(parent.getLeft() != null || parent.getRight() != null) {
+            if(key.compareTo(parent.getKey()) > 0) {
+                parent = parent.getLeft();
+                return null;
+            }
+            else if(key.compareTo(parent.getKey()) < 0) {
+                parent = parent.getRight();
+                return null;
+            }
+            else {
+                return value;
+            }
+        }
     }
 
     public V search(K key){
-        // TODO
-        return null;
+        MyBSTNode<K, V> curr = root;
+        while(!key.equals(curr.getKey())) {
+            if(key.compareTo(curr.getKey()) > 0) {
+                curr = curr.getLeft();
+            }
+            else if(key.compareTo(curr.getKey()) < 0) {
+                curr = curr.getRight();
+            }
+            else {
+                break;
+            }
+            
+        }
+        return curr.getValue();
     }
 
     public V remove(K key){
