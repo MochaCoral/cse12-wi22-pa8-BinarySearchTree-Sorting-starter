@@ -18,43 +18,69 @@ public class MyBST<K extends Comparable<K>,V>{
         while(parent.getLeft() != null || parent.getRight() != null) {
             if(key.compareTo(parent.getKey()) > 0) {
                 parent = parent.getLeft();
-                return null;
             }
             else if(key.compareTo(parent.getKey()) < 0) {
                 parent = parent.getRight();
-                return null;
             }
             else {
-                return value;
+
             }
         }
+        size++;
+        
     }
 
     public V search(K key){
-        MyBSTNode<K, V> curr = root;
-        while(!key.equals(curr.getKey())) {
+        if(key == null) {
+            return null;
+        }
+        MyBSTNode<K, V> curr = this.root;
+        while(!key.equals(curr.getKey()) || curr.getLeft() != null && curr.getRight() != null) {
             if(key.compareTo(curr.getKey()) > 0) {
                 curr = curr.getLeft();
             }
             else if(key.compareTo(curr.getKey()) < 0) {
                 curr = curr.getRight();
             }
-            else {
-                break;
-            }
-            
         }
         return curr.getValue();
     }
 
     public V remove(K key){
-        // TODO
-        return null;
+        if(key == null) {
+            return null;
+        }
+        MyBSTNode<K,V> curr = this.root;
+        MyBSTNode<K,V> removed;
+        while(!key.equals(curr.getKey()) || curr.getLeft() != null && curr.getRight() != null) {
+            if(key.compareTo(curr.getKey()) > 0) {
+                curr = curr.getLeft();
+            }
+            else if(key.compareTo(curr.getKey()) < 0) {
+                curr = curr.getRight();
+            }
+        }
+        removed = curr;
+        if(!removed.getKey().equals(key)) {
+            return null;
+        }
+        else {
+
+        }
+        
+        return curr.getValue();
     }
     
     public ArrayList<MyBSTNode<K, V>> inorder(){
-        // TODO
-        return null;
+        ArrayList<MyBSTNode<K,V>> inorderArray = new ArrayList<MyBSTNode<K,V>>();
+        MyBSTNode<K,V> curr = this.root;
+        while(curr.getLeft() != null) {
+            curr = curr.getLeft();
+        }
+        while(inorderArray.size() < this.size) {
+            inorderArray.add(curr.successor());
+        }
+        return inorderArray;
     }
 
     static class MyBSTNode<K,V>{
@@ -188,8 +214,22 @@ public class MyBST<K extends Comparable<K>,V>{
         }
 
         public MyBSTNode<K, V> predecessor(){
-            // TODO
-            return null;
+            if(this.getLeft() != null) {
+                MyBSTNode<K,V> curr = this.getLeft();
+                while(curr.getRight() != null) {
+                    curr = curr.getLeft();
+                }
+                return curr;
+            }
+            else {
+                MyBSTNode<K,V> parent = this.getParent();
+                MyBSTNode<K,V> curr = this;
+                while(parent != null && curr == parent.getLeft()) {
+                    curr = parent;
+                    parent = parent.getParent();
+                }
+                return parent;
+            }
         }
 
         /** This method compares if two node objects are equal.
