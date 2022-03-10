@@ -1,3 +1,11 @@
+/**
+ * Name: Morales, Kyle
+ * ID: A16162998
+ * Email: kmmorale@ucsd.edu
+ * Sources used: Zybooks, course
+ * 
+ * Implementation binary search tree iterator over the binary tree search class
+ */
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -26,9 +34,15 @@ public class MyBSTIterator<K extends Comparable<K>, V> extends MyBST<K, V> {
             return next != null;
         }
 
-        MyBSTNode<K, V> nextNode() {
-            // TODO
-            return null;
+        MyBSTNode<K, V> nextNode() throws NoSuchElementException {
+            if(!this.hasNext()) {
+                throw new NoSuchElementException();
+            }
+            else {
+                lastVisited = next;
+                next = next.successor();
+                return lastVisited;
+            }
         }
 
         /**

@@ -1,3 +1,11 @@
+/**
+ * Name: Morales, Kyle
+ * ID: A16162998
+ * Email: kmmorale@ucsd.edu
+ * Sources used: Zybooks, course
+ * 
+ * Implementation of binary search tree and binary search tree node classes
+ */
 import java.util.ArrayList;
 
 
@@ -10,77 +18,145 @@ public class MyBST<K extends Comparable<K>,V>{
     }
 
     public V insert(K key, V value) throws NullPointerException{
+        MyBSTNode<K,V> node = new MyBSTNode<K,V>(key, value, null);
         if(key == null) {
             throw new NullPointerException();
         }
-        MyBSTNode<K,V> insertion = new MyBSTNode<K,V>(key, value, null);
-        MyBSTNode<K,V> parent = this.root;
-        while(parent.getLeft() != null || parent.getRight() != null) {
-            if(key.compareTo(parent.getKey()) > 0) {
-                parent = parent.getLeft();
-            }
-            else if(key.compareTo(parent.getKey()) < 0) {
-                parent = parent.getRight();
-            }
-            else {
-
-            }
+        else if(this.root == null) {
+            this.root = node;
+            return null;
         }
-        size++;
-        
+        else {
+            MyBSTNode<K,V> curr = root;
+            while(curr != null) {
+                if(node.getKey().compareTo(curr.getKey()) < 0) {
+                    if(curr.getLeft() == null) {
+                        node.setParent(curr);
+                        curr.setLeft(node);
+                        return null;
+                    }
+                    else {
+                        curr = curr.getLeft();
+                    }
+                }
+                else if(node.getKey().compareTo(curr.getKey()) > 0){
+                    if(curr.getRight() == null) {
+                        node.setParent(curr);
+                        curr.setRight(node);
+                        return null;
+                    }
+                    else {
+                        curr = curr.getRight();
+                    }
+                }
+                else {
+
+                    return value;
+                }
+            }
+            return value;
+        }
     }
 
     public V search(K key){
-        if(key == null) {
-            return null;
-        }
-        MyBSTNode<K, V> curr = this.root;
-        while(!key.equals(curr.getKey()) || curr.getLeft() != null && curr.getRight() != null) {
-            if(key.compareTo(curr.getKey()) > 0) {
+        MyBSTNode<K,V> curr = this.root;
+        while(curr != null) {
+            if(key.compareTo(curr.getKey()) == 0) {
+                return curr.getValue();
+            } 
+            else if (key.compareTo(curr.getKey()) < 0) {
                 curr = curr.getLeft();
             }
-            else if(key.compareTo(curr.getKey()) < 0) {
+            else {
                 curr = curr.getRight();
             }
         }
-        return curr.getValue();
+        return null;
     }
 
     public V remove(K key){
         if(key == null) {
             return null;
         }
-        MyBSTNode<K,V> curr = this.root;
-        MyBSTNode<K,V> removed;
-        while(!key.equals(curr.getKey()) || curr.getLeft() != null && curr.getRight() != null) {
-            if(key.compareTo(curr.getKey()) > 0) {
-                curr = curr.getLeft();
+        MyBSTNode<K,V> par = null;
+        MyBSTNode<K,V> cur = this.root;
+        while(cur != null) { // Search for node
+            if (cur.getKey() == key) { // Node found 
+                V curValue = cur.getValue();
+                if (cur.getLeft() == null && cur.getRight() == null) { // Remove leaf
+                    if (par == null) { // Node is root
+                        this.root = null;
+                    }
+                    else if (par.getLeft() == cur) {
+                        par.setRight(null);
+                    }
+                    else {
+                        par.setRight(null);
+                    }
+                }
+                else if (cur.getRight() == null) {                // Remove node with only left child
+                    if (par == null) {// Node is root
+                       this.root = cur.getLeft();
+                    }
+                    else if (par.getLeft() == cur) {
+                        par.setLeft(cur.getLeft());
+                    }
+                    else {
+                        par.setRight(cur.getLeft());
+                    }
+                }
+                else if (cur.getLeft() == null) {                // Remove node with only right child
+                    if (par == null) {// Node is root
+                        this.root = cur.getRight();
+                    }
+                    else if (par.getLeft() == cur) {
+                        par.setLeft(cur.getRight());
+                    }
+                    else {
+                        par.setRight(cur.getRight());
+                    }
+                }
+                else {                                      // Remove node with two children
+                // Find successor (leftmost child of right subtree)
+                    MyBSTNode<K,V> suc = cur.getRight();
+                    while (suc.getLeft() != null) {
+                        suc = suc.getLeft();
+                    }
+                    V successorValue = suc.getValue();
+                    remove(suc.getKey());     // Remove successor
+                    cur.setValue(successorValue);
+                }
+                return curValue;// Node found and removed
             }
-            else if(key.compareTo(curr.getKey()) < 0) {
-                curr = curr.getRight();
+            else if (cur.getKey().compareTo(key) < 0) { // Search right
+                par = cur;
+                cur = cur.getRight();
+            }
+            else {                     // Search left
+                par = cur;
+                cur = cur.getLeft();
             }
         }
-        removed = curr;
-        if(!removed.getKey().equals(key)) {
-            return null;
-        }
-        else {
-
-        }
-        
-        return curr.getValue();
+        return null;// Node not found
     }
     
     public ArrayList<MyBSTNode<K, V>> inorder(){
         ArrayList<MyBSTNode<K,V>> inorderArray = new ArrayList<MyBSTNode<K,V>>();
-        MyBSTNode<K,V> curr = this.root;
-        while(curr.getLeft() != null) {
-            curr = curr.getLeft();
+        if(this.root == null) {
+            return inorderArray;
         }
-        while(inorderArray.size() < this.size) {
-            inorderArray.add(curr.successor());
+        else {
+            MyBSTNode<K,V> curr = this.root;
+            while(curr.getLeft() != null) {
+                curr = curr.getLeft();
+            }
+            inorderArray.add(curr);
+            while(inorderArray.size() < this.size) {
+                inorderArray.add(curr.successor());
+                curr = curr.successor();
+            }
+            return inorderArray;
         }
-        return inorderArray;
     }
 
     static class MyBSTNode<K,V>{
@@ -217,7 +293,7 @@ public class MyBST<K extends Comparable<K>,V>{
             if(this.getLeft() != null) {
                 MyBSTNode<K,V> curr = this.getLeft();
                 while(curr.getRight() != null) {
-                    curr = curr.getLeft();
+                    curr = curr.getRight();
                 }
                 return curr;
             }
